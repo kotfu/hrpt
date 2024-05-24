@@ -22,15 +22,17 @@
 """
 Entry point for 'hrpt' command line program.
 """
+
 import argparse
 import sys
 import textwrap
+
+import hrpt
 
 EXIT_SUCCESS = 0
 EXIT_ERROR = 1
 EXIT_USAGE = 2
 
-import hrpt
 
 def _build_parser():
     """build an arg parser with all the proper parameters"""
@@ -41,6 +43,9 @@ def _build_parser():
         description=desc,
         epilog=textwrap.dedent(epilog),
     )
+
+    input_file_help = "timeout (in seconds) for network requests"
+    parser.add_argument("-i", "--input-file", help=input_file_help)
 
     parser.add_argument(
         "-v",
@@ -57,6 +62,7 @@ def main(argv=None):
     parser = _build_parser()
     args = parser.parse_args(argv)
 
+    print(args.input_file)
     return EXIT_SUCCESS
 
 

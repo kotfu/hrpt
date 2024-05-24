@@ -20,7 +20,7 @@
 # SOFTWARE.
 #
 """
-hrpt is the Ham Radio Programmning Toolkit
+hrpt is the Ham Radio Programming Toolkit
 """
 
 # ruff: noqa: F401 [import but not used]
@@ -30,6 +30,11 @@ try:
 except ImportError:  # pragma: nocover
     # for python < 3.8
     import importlib_metadata
+
+from .models import (
+    Memory,
+    Mode,
+)
 
 try:
     __version__ = importlib_metadata.version(__name__)
