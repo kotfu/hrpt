@@ -1,0 +1,97 @@
+# pyproject.toml
+#
+
+[build-system]
+requires = [
+    "setuptools>=45",
+    "wheel",
+    "setuptools_scm[toml]>=6.2"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hrpt"
+description = "Ham Radio Programming Toolkit"
+readme = "README.md"
+authors = [
+    {name = "Jared Crapo", email = "jared@k0tfu.org"},
+]
+license = {file = "LICENSE"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Operating System :: OS Independent",
+    "Topic :: Utilities",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = ["command line"]
+requires-python = ">=3.8"
+dependencies = []
+dynamic = ["version"]
+
+[tool.setuptools_scm]
+# empty section is the quivilent of setuptools_scm=True in setup.py
+
+
+[project.scripts]
+hrpt = "hrpt.__main__:main"
+
+
+[project.urls]
+homepage = "https://github.com/kotfu/hrptr"
+repository = "https://github.com/kotfu/hrptr"
+
+
+[project.optional-dependencies]
+dev = [
+    "build",
+    "pytest",
+    "pytest-mock",
+    "tox",
+    "codecov",
+    "pytest-cov",
+    "ruff",
+    "pylint",
+    "setuptools_scm",
+    "wheel",
+    "twine",
+    "rope",
+    "invoke",
+]
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+
+[tool.setuptools.package-data]
+tomcatmanager = ["py.typed"]
+
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
