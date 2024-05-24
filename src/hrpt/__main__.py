@@ -44,8 +44,11 @@ def _build_parser():
         epilog=textwrap.dedent(epilog),
     )
 
-    input_file_help = "timeout (in seconds) for network requests"
+    input_file_help = "file to read input from"
     parser.add_argument("-i", "--input-file", help=input_file_help)
+
+    output_file_help = "file to write output to"
+    parser.add_argument("-o", "--output-file", help=output_file_help)
 
     parser.add_argument(
         "-v",
@@ -59,10 +62,17 @@ def _build_parser():
 
 def main(argv=None):
     """main function"""
-    parser = _build_parser()
-    args = parser.parse_args(argv)
+    argparser = _build_parser()
+    args = argparser.parse_args(argv)
 
-    print(args.input_file)
+    parser = hrpt.parsers.CHIRPParser()
+    with open(args.input_file, encoding="utf8", newline='') as fileobj:
+        memories = parser.parse(fileobj)
+
+    with open(args.output_file, mode = "w", encoding="utf8") as fileobj:
+        renderer = hrpt.renderers.ADMS16Renderer()
+        renderer.render(memories, fileobj)
+
     return EXIT_SUCCESS
 
 

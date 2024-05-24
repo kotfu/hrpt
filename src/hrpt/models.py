@@ -27,6 +27,10 @@ import enum
 from dataclasses import dataclass, field
 
 
+class TranslationError(ValueError):
+    """Raised when a parser can not translate an incoming value to a standard value"""
+
+
 class Mode(enum.Enum):
     """Enumeration of operating modes"""
 
@@ -39,10 +43,14 @@ class Memory:
     """An internal representation of a single memory in a radio
 
     Based on CHIRP, since CHIRP's format is known to support dozens of radios
+
+    You should not set both tx_ctcss_freq and tx_dcs_code
+
+    You should not set both rx_ctcss_freq and rx_dcs_code
     """
 
     number: int
-    frequency: int
+    frequency: int = field(init=False, default=None)
     mode: "Mode" = field(init=False, default=Mode.FM)
     offset: int = field(init=False, default=None)
     tx_ctcss_freq: int = field(init=False, default=None)
