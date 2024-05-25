@@ -24,11 +24,11 @@ This module contains all render classes for output file formats
 """
 
 from .helpers import (
+    frequency_step,
     standard_offset,
 )
 from .models import (
     Memory,
-    Mode,
     RenderError,
 )
 
@@ -119,14 +119,11 @@ class ADMS16Renderer:
         # column 8: name
         out.append(f"{memory.name16}")
 
-        # column 9: tone
-        out.append(self.render_ctcss_freq(memory.tx_ctcss_freq))
-
-        # column 10: ctcss freq
-        out.append("placeholder")
-
-        # column 11: dtcs code
-        out.append("placeholder")
+        # columns 9, 10, 11: tone type, ctcss freq, dcs code
+        (tone_type, ctcss_freq, dcs_code) = self.render_tone()
+        out.append(tone_type)
+        out.append(ctcss_freq)
+        out.append(dcs_code)
 
         # column 12: User CTCSS
         out.append("1500 Hz")
@@ -144,11 +141,11 @@ class ADMS16Renderer:
         out.append("YES")
 
         # column 17: step
-        out.append("placeholder")
+        out.append(self.render_frequency_step(frequency_step(memory.frequency)))
 
         # column 18: narrow
-        # default could be OFF unless we know its narrow FM
-        out.append("placeholder")
+        # TODO build a function that calculates narrow based on the frequency
+        out.append("OFF")
 
         # column 19: clock shift
         out.append("OFF")
@@ -186,8 +183,42 @@ class ADMS16Renderer:
             f"Memory '{self._memory.number}' has an unknown"
             f" offset_frequency of '{offset_freq}'")
 
+    def render_tone(self):
+        """render tone type, ctcss freq, and dtcs code
+
+        use self._memory
+        """
+        # if we have a ctcss tone, that takes precendence
+        if self._memory.tx_ctcss_freq:
+            tone_type = "TONE"
+            ctcss_freq = self.render_ctcss_freq(self._memory.tx_ctcss_freq)
+            dcs_code = self.render_dcs_code(None)
+        elif self._memory.tx_dcs_code:
+            tone_type = "DTCS"
+            ctcss_freq = self.render_ctcss_freq(None)
+            dcs_code = self.render_dcs_code(self._memory.tx_dcs_code)
+        else:
+            tone_type = "TONE"
+            ctcss_freq = self.render_ctcss_freq(None)
+            dcs_code = self.render_dcs_code(None)
+
+        return (tone_type, ctcss_freq, dcs_code)
+
     def render_ctcss_freq(self, tone_freq):
         """Render a ctcss tone frequency"""
         if not tone_freq:
+            # default tone_freq
             tone_freq = 100
         return f"{tone_freq:.1f} Hz"
+
+    def render_dcs_code(self, dcs_code):
+        """Render a dcs code as a string left padded with zeros"""
+        if not dcs_code:
+            # default dcs_code
+            dcs_code = 23
+        return f"{dcs_code:03}"
+
+    def render_frequency_step(self, step):
+        """Render a frequency step as a string"""
+        step = step / 1_000
+        return f"{step:.1f}KHz"

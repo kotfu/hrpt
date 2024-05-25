@@ -25,7 +25,7 @@ This module contains a number of useful helper functions
 
 
 def standard_offset(frequency):
-    """Calculate the standard offset based on the frequency
+    """Calculate the standard offset for a given frequency
 
     Offset is returned as an integer in Hz, or 0 if this function isn't smart enough to
     calculate it
@@ -38,6 +38,7 @@ def standard_offset(frequency):
         # 2m amateur radio band
         offset = 600_000
     elif frequency >= 222_000_000 and frequency < 225_000_000:
+        # 1.25m amateur radio band
         offset = -1_600_000
     elif frequency >= 440_000_000 and frequency < 450_000_000:
         # 70cm amateur radio band
@@ -47,3 +48,32 @@ def standard_offset(frequency):
         offset = 5_000_000
 
     return offset
+
+
+def frequency_step(frequency):
+    """Calculate the standard frequency step for a given frequency"""
+    step = 0
+
+    if not frequency:
+        return step
+
+    if frequency >= 144_000_000 and frequency < 148_000_000:
+        # 2m amateur radio band
+        step = 5_000
+    if frequency >= 151_000_000 and frequency < 155_000_000:
+        # MURS
+        step = 5_000
+    if frequency >= 161_000_000 and frequency < 162_000_000:
+        # NOAA Weather
+        step = 25_000
+    elif frequency >= 222_000_000 and frequency < 225_000_000:
+        # 1.25m amateur radio band
+        step = 10_000
+    elif frequency >= 440_000_000 and frequency < 450_000_000:
+        # 70cm amateur radio band
+        step = 25_000
+    elif frequency >= 462_000_000 and frequency < 467_000_000:
+        # GMRS falls in this range
+        step = 12_500
+
+    return step
