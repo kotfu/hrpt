@@ -28,7 +28,7 @@ import csv
 from .models import (
     Memory,
     Mode,
-    TranslationError,
+    ParseError,
 )
 
 
@@ -70,12 +70,13 @@ class CHIRPParser:
             self.parse_squelch(row, m)
             m.name16 = row[1]
             memories.append(m)
+
         return memories
 
     def parse_squelch(self, row, memory):
         """Parse and set the CTCSS and DCS squelch"""
         if row[5] == "Tone":
-            memory.tx_ctcss_freq = self.translate_ctcss(row[7])
+            memory.tx_ctcss_freq = self.translate_ctcss(row[6])
         if row[5] == "DTCS":
             memory.tx_dcs_code = self.translate_dcs(row[8])
 
@@ -93,7 +94,7 @@ class CHIRPParser:
             return Mode.FM
         elif value == Mode.NARROW_FM.value:
             return Mode.NARROW_FM
-        raise TranslationError("Unknown Mode '{value}' on line {self.line_number}")
+        raise ParseError("Unknown Mode '{value}' on line {self.line_number}")
 
     def translate_offset(self, direction, value):
         """Create the offset from two string fields"""
@@ -106,8 +107,8 @@ class CHIRPParser:
         return 0
 
     def translate_ctcss(self, value):
-        """CHIRP stores CTCSS tones as strings in KHz, we convert it to Hz"""
-        return int(float(value) * 1_000)
+        """CHIRP stores CTCSS tones as strings in Hz, we store float of Hz"""
+        return float(value)
 
     def translate_dcs(self, value):
         """CHIRP stores DCS codes as string, we store them as integers"""

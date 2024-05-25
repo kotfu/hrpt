@@ -27,8 +27,12 @@ import enum
 from dataclasses import dataclass, field
 
 
-class TranslationError(ValueError):
+class ParseError(ValueError):
     """Raised when a parser can not translate an incoming value to a standard value"""
+
+
+class RenderError(ValueError):
+    """Raised when a renderer encounters a situation is doesn't know how to render"""
 
 
 class Mode(enum.Enum):
@@ -53,8 +57,8 @@ class Memory:
     frequency: int = field(init=False, default=None)
     mode: "Mode" = field(init=False, default=Mode.FM)
     offset: int = field(init=False, default=None)
-    tx_ctcss_freq: int = field(init=False, default=None)
-    rx_ctcss_freq: int = field(init=False, default=None)
+    tx_ctcss_freq: float = field(init=False, default=None)
+    rx_ctcss_freq: float = field(init=False, default=None)
     tx_dcs_code: int = field(init=False, default=None)
     rx_dcs_code: int = field(init=False, default=None)
     name6: str = field(init=False, default=None)

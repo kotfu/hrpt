@@ -69,7 +69,9 @@ def main(argv=None):
     with open(args.input_file, encoding="utf8", newline='') as fileobj:
         memories = parser.parse(fileobj)
 
-    with open(args.output_file, mode = "w", encoding="utf8") as fileobj:
+    # the open really needs to be encapsulated in the renderer, because in this case,
+    # the newline of '\n' is required for ADMS16Renderer to work properly
+    with open(args.output_file, mode = "w", encoding="utf8", newline = '\n') as fileobj:
         renderer = hrpt.renderers.ADMS16Renderer()
         renderer.render(memories, fileobj)
 

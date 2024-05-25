@@ -20,27 +20,30 @@
 # SOFTWARE.
 #
 """
-hrpt is the Ham Radio Programming Toolkit
+This module contains a number of useful helper functions
 """
 
-# ruff: noqa: F401 [import but not used]
-try:
-    # for python 3.8+
-    import importlib.metadata as importlib_metadata
-except ImportError:  # pragma: nocover
-    # for python < 3.8
-    import importlib_metadata
 
-from . import parsers, renderers
-from .models import (
-    Memory,
-    Mode,
-    ParseError,
-)
+def standard_offset(frequency):
+    """Calculate the standard offset based on the frequency
 
-try:
-    __version__ = importlib_metadata.version(__name__)
-except importlib_metadata.PackageNotFoundError:  # pragma: nocover
-    __version__ = "unknown"
+    Offset is returned as an integer in Hz, or 0 if this function isn't smart enough to
+    calculate it
+    """
+    offset = 0
+    if not frequency:
+        return offset
 
-VERSION_STRING = __version__
+    if frequency >= 144_000_000 and frequency < 148_000_000:
+        # 2m amateur radio band
+        offset = 600_000
+    elif frequency >= 222_000_000 and frequency < 225_000_000:
+        offset = -1_600_000
+    elif frequency >= 440_000_000 and frequency < 450_000_000:
+        # 70cm amateur radio band
+        offset = 5_000_000
+    elif frequency >= 450_000_000 and frequency < 470_000_000:
+        # UHF, GMRS falls in this range
+        offset = 5_000_000
+
+    return offset
