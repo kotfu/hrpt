@@ -66,14 +66,21 @@ def main(argv=None):
     args = argparser.parse_args(argv)
 
     parser = hrpt.parsers.CHIRPParser()
-    with open(args.input_file, encoding="utf8", newline='') as fileobj:
-        memories = parser.parse(fileobj)
+    # TODO maybe the open should be encapsulated in the parser because
+    # the CSV module needs newline=''
+    if args.input_file:
+        with open(args.input_file, encoding="utf8", newline='') as fileobj:
+            memories = parser.parse(fileobj)
+    else:
+        memories = parser.parse(sys.stdin)
 
-    # the open really needs to be encapsulated in the renderer, because in this case,
-    # the newline of '\n' is required for ADMS16Renderer to work properly
-    with open(args.output_file, mode = "w", encoding="utf8", newline = '\n') as fileobj:
-        renderer = hrpt.renderers.ADMS16Renderer()
-        renderer.render(memories, fileobj)
+    # TODO maybe the open should be encapsulated in the renderer?
+    renderer = hrpt.renderers.ADMS16Renderer()
+    if args.output_file:
+        with open(args.output_file, mode = "w", encoding="utf8", newline = '\n') as fileobj:
+            renderer.render(memories, fileobj)
+    else:
+        renderer.render(memories, sys.stdout)
 
     return EXIT_SUCCESS
 
