@@ -26,6 +26,7 @@ This module contains all parser classes for the incoming file formats
 import csv
 
 from .models import (
+    Frequency,
     Memory,
     Mode,
     ParseError,
@@ -85,8 +86,8 @@ class CHIRPParser:
         return int(value)
 
     def translate_frequency(self, value):
-        """Translate frequency from a string to an integer in Hz"""
-        return int(float(value) * 1_000_000)
+        """Translate frequency from a string to a Frequency"""
+        return Frequency(int(float(value) * 1_000_000))
 
     def translate_mode(self, value):
         """Translate the mode to the proper enum"""

@@ -28,7 +28,10 @@ from .helpers import (
     standard_offset,
 )
 from .models import (
+    Band,
+    Frequency,
     Memory,
+    Mode,
     RenderError,
 )
 
@@ -42,6 +45,7 @@ class ADMS16Renderer:
         * no header lines
         * 999 rows, numbered 1 to 999. Empty memories must be represented as a row
           in the file or ADMS-16 will not load the file
+        * channel 1 must not be empty
     """
 
     def __init__(self):
@@ -63,7 +67,17 @@ class ADMS16Renderer:
         # memory_pos is the index in memories that we are currently iterating on
         memory_pos = 0
 
-        for line_number in range(1, 999):
+        # generate numbers 1 to 999, each of these lines must be present in the file
+        # or ADMS-16 will refuse to import it
+        for line_number in range(1, 1000):
+            # special case to ensure we have a row in the file for channel 1
+            # ADMS-16 won't import if there isn't a memory on channel 1
+            if line_number == 1 and (not memories or memories[0].number != 1):
+                call = Memory(number=1)
+                call.frequency=Frequency(146_520_000)
+                fileobj.write(f"{self.render_memory(call)}\n")
+                continue
+
             if memories[memory_pos].number == line_number:
                 fileobj.write(f"{self.render_memory(memories[memory_pos])}\n")
                 # increment memory_pos to point to the next spot in the array,
@@ -110,14 +124,26 @@ class ADMS16Renderer:
             out.append(self.render_offset_direction(memory.offset))
 
         # column 6: mode
-        out.append(memory.mode.value)
+        if memory.mode == Mode.FM:
+            narrow = "OFF"
+            out.append("FM")
+        elif memory.mode == Mode.NARROW_FM:
+            narrow = "ON"
+            out.append("FM")
+        else:
+            narrow = "OFF"
+            # TODO, make this more robust for AM
+            out.append(memory.mode.value)
 
         # column 7: digital/analog
         # could be AMS if you want to do auto CFM detection and switching
         out.append("FM")
 
         # column 8: name
-        out.append(f"{memory.name16}")
+        if memory.name16:
+            out.append(f"{memory.name16}")
+        else:
+            out.append("")
 
         # columns 9, 10, 11: tone type, ctcss freq, dcs code
         (tone_type, ctcss_freq, dcs_code) = self.render_tone()
@@ -129,10 +155,17 @@ class ADMS16Renderer:
         out.append("1500 Hz")
 
         # column 13: RX DG-ID
-        out.append("RX 00")
+        if memory.frequency.band in [Band.AMATEUR_1_25M]:
+            out.append("-")
+        else:
+            out.append("RX 00")
 
         # column 14: TX DG-IG
-        out.append("TX 00")
+        if memory.frequency.band in [Band.AMATEUR_1_25M]:
+#        if memory.frequency.band in [Band.AMATEUR_2M, Band.AMATEUR_70CM, Band.GMRS, Band.MURS, Band.NOAAWX]:
+            out.append("-")
+        else:
+            out.append("TX 00")
 
         # column 15: Tx Power
         out.append("HIGH")
@@ -144,8 +177,7 @@ class ADMS16Renderer:
         out.append(self.render_frequency_step(frequency_step(memory.frequency)))
 
         # column 18: narrow
-        # TODO build a function that calculates narrow based on the frequency
-        out.append("OFF")
+        out.append(narrow)
 
         # column 19: clock shift
         out.append("OFF")
@@ -161,14 +193,14 @@ class ADMS16Renderer:
     def render_frequency_as_mhz(self, freq):
         """render an integer frequency in hz as mhz"""
         mhz = freq / 1_000_000
-        return f"{mhz:.4f}"
+        return f"{mhz:.5f}"
 
     def render_offset_as_mhz(self, offset):
         """render the offset frequency as a string in MHz
         gotta take the abs of the frequency to comply with the file format expectations
         """
         mhz = abs(offset) / 1_000_000
-        return f"{mhz:.2f}"
+        return f"{mhz:.5f}"
 
     def render_offset_direction(self, offset_freq):
         """take an integer offset frequency and turn it into the proper string"""
@@ -194,11 +226,11 @@ class ADMS16Renderer:
             ctcss_freq = self.render_ctcss_freq(self._memory.tx_ctcss_freq)
             dcs_code = self.render_dcs_code(None)
         elif self._memory.tx_dcs_code:
-            tone_type = "DTCS"
+            tone_type = "DCS"
             ctcss_freq = self.render_ctcss_freq(None)
             dcs_code = self.render_dcs_code(self._memory.tx_dcs_code)
         else:
-            tone_type = "TONE"
+            tone_type = "OFF"
             ctcss_freq = self.render_ctcss_freq(None)
             dcs_code = self.render_dcs_code(None)
 

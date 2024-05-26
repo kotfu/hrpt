@@ -41,6 +41,37 @@ class Mode(enum.Enum):
     FM = "FM"
     NARROW_FM = "NFM"
 
+class Band(enum.Enum):
+    """Enum with extra data elements for all the radio bands"""
+    def __new__(cls, *args, **kwds):
+        #value = len(cls.__members__) + 1
+        obj = object.__new__(cls)
+        obj._value_ = args[0]
+        return obj
+    def __init__(self, _, start_freq, end_freq):
+        # can't set value from __init__, but the argument gets passed
+        # so we have an unused argument here
+        self.start_freq = start_freq
+        self.end_freq = end_freq
+
+    AMATEUR_2M = "2m", 144_000_000, 148_000_000
+    AMATEUR_70CM = "70cm", 420_000_000, 450_000_000
+    AMATEUR_1_25M = "1.25m", 222_000_000, 225_000_000
+    GMRS = "GMRS", 462_000_000, 467_712_500
+    MURS = "MURS", 151_820_000, 154_600_000
+    NOAAWX = "NOAA Wx", 161_650_000, 162_550_000
+    UNKNOWN = "unknown", 0, 0
+
+class Frequency(int):
+    """Subclass of int to store a Frequency in Hz"""
+
+    @property
+    def band(self):
+        """Return the band the frequency is in"""
+        for band in Band:
+            if self >= band.start_freq and self <= band.end_freq:
+                return band
+        return Band.UNKNOWN
 
 @dataclass
 class Memory:
@@ -54,7 +85,7 @@ class Memory:
     """
 
     number: int
-    frequency: int = field(init=False, default=None)
+    frequency: "Frequency" = field(init=False, default=None)
     mode: "Mode" = field(init=False, default=Mode.FM)
     offset: int = field(init=False, default=None)
     tx_ctcss_freq: float = field(init=False, default=None)
