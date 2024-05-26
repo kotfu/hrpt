@@ -95,3 +95,7 @@ select = [
     # isort
     "I",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov-report=term-missing --cov=src/hrpt"
