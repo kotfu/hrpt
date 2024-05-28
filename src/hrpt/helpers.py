@@ -50,35 +50,3 @@ def standard_offset(frequency):
         offset = 600_000
 
     return offset
-
-
-def frequency_step(frequency):
-    """Calculate the standard frequency step for a given frequency"""
-    ## TODO do this based on the band of the frequency
-    step = 0
-
-    if not frequency:
-        return step
-
-    if frequency >= 144_000_000 and frequency < 148_000_000:
-        # 2m amateur radio band
-        step = 5_000
-    if frequency >= 151_000_000 and frequency < 155_000_000:
-        # MURS
-        step = 5_000
-    if frequency >= 161_000_000 and frequency < 163_000_000:
-        # NOAA Weather
-        step = 25_000
-    elif frequency >= 222_000_000 and frequency < 225_000_000:
-        # 1.25m amateur radio band
-        step = 10_000
-    elif frequency >= 420_000_000 and frequency < 450_000_000:
-        # 70cm amateur radio band
-        step = 25_000
-    elif frequency >= 462_000_000 and frequency < 468_000_000:
-        # GMRS falls in this range
-        step = 12_500
-    else:
-        step = 5_000
-
-    return step

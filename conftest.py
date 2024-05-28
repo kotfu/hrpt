@@ -30,6 +30,7 @@ def input_files_dir():
     projdir = pathlib.Path(__file__).parent
     return projdir / "tests" / "input_files"
 
+
 @pytest.fixture
 def output_files_dir():
     """return the path the the output_files test directory"""

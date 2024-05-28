@@ -41,26 +41,32 @@ class Mode(enum.Enum):
     FM = "FM"
     NARROW_FM = "NFM"
 
+
 class Band(enum.Enum):
     """Enum with extra data elements for all the radio bands"""
+
     def __new__(cls, *args, **kwds):
-        #value = len(cls.__members__) + 1
+        # value = len(cls.__members__) + 1
         obj = object.__new__(cls)
         obj._value_ = args[0]
         return obj
-    def __init__(self, _, start_freq, end_freq):
-        # can't set value from __init__, but the argument gets passed
-        # so we have an unused argument here
-        self.start_freq = start_freq
-        self.end_freq = end_freq
 
-    AMATEUR_2M = "2m", 144_000_000, 148_000_000
-    AMATEUR_70CM = "70cm", 420_000_000, 450_000_000
-    AMATEUR_1_25M = "1.25m", 222_000_000, 225_000_000
-    GMRS = "GMRS", 462_000_000, 467_712_500
-    MURS = "MURS", 151_820_000, 154_600_000
-    NOAAWX = "NOAA Wx", 161_650_000, 162_550_000
-    UNKNOWN = "unknown", 0, 0
+    def __init__(self, *args):
+        # args[0] has the name of the band, but we already saved that in __new__
+        self.start_freq = args[1]
+        self.end_freq = args[2]
+        self.tuning_step = args[3]
+
+    AMATEUR_2M = "2m", 144_000_000, 148_000_000, 5_000
+    AMATEUR_70CM = "70cm", 420_000_000, 450_000_000, 25_000
+    AMATEUR_1_25M = "1.25m", 222_000_000, 225_000_000, 10_000
+    AMATEUR_6M = "6m", 50_000_000, 54_000_000, 5, 000
+    GMRS = "GMRS", 462_000_000, 467_712_500, 12_500
+    MURS = "MURS", 151_820_000, 154_600_000, 5_000
+    NOAA_WEATHER = "NOAA Weather", 161_650_000, 162_550_000, 25_000
+    AIRBAND = "Airband", 108_000_000, 137_000_000, 25_000
+    UNKNOWN = "Unknown", 0, 0, 5_000
+
 
 class Frequency(int):
     """Subclass of int to store a Frequency in Hz"""
@@ -72,6 +78,7 @@ class Frequency(int):
             if self >= band.start_freq and self <= band.end_freq:
                 return band
         return Band.UNKNOWN
+
 
 @dataclass
 class Memory:

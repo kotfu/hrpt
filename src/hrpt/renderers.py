@@ -24,7 +24,6 @@ This module contains all render classes for output file formats
 """
 
 from .helpers import (
-    frequency_step,
     standard_offset,
 )
 from .models import (
@@ -74,7 +73,7 @@ class ADMS16Renderer:
             # ADMS-16 won't import if there isn't a memory on channel 1
             if line_number == 1 and (not memories or memories[0].number != 1):
                 call = Memory(number=1)
-                call.frequency=Frequency(146_520_000)
+                call.frequency = Frequency(146_520_000)
                 fileobj.write(f"{self.render_memory(call)}\n")
                 continue
 
@@ -162,7 +161,7 @@ class ADMS16Renderer:
 
         # column 14: TX DG-IG
         if memory.frequency.band in [Band.AMATEUR_1_25M]:
-#        if memory.frequency.band in [Band.AMATEUR_2M, Band.AMATEUR_70CM, Band.GMRS, Band.MURS, Band.NOAAWX]:
+            # no idea why, but just figured this out from observation and testing
             out.append("-")
         else:
             out.append("TX 00")
@@ -174,7 +173,7 @@ class ADMS16Renderer:
         out.append("YES")
 
         # column 17: step
-        out.append(self.render_frequency_step(frequency_step(memory.frequency)))
+        out.append(self.render_frequency_step(memory.frequency.band.tuning_step))
 
         # column 18: narrow
         out.append(narrow)
@@ -213,7 +212,8 @@ class ADMS16Renderer:
         # shouldn't get here
         raise RenderError(
             f"Memory '{self._memory.number}' has an unknown"
-            f" offset_frequency of '{offset_freq}'")
+            f" offset_frequency of '{offset_freq}'"
+        )
 
     def render_tone(self):
         """render tone type, ctcss freq, and dtcs code

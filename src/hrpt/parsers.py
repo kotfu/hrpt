@@ -48,6 +48,7 @@ class CHIRPParser:
         * 1 row per saved memory, empty memories do not have a row
 
     """
+
     def __init__(self):
         super().__init__()
         self.line_number = 0

@@ -28,7 +28,7 @@ import hrpt
 def test_CHIRP_to_ADMS16(input_files_dir, output_files_dir, tmp_path):
     input_file = input_files_dir / "mem1000-CHIRP.csv"
     parser = hrpt.parsers.CHIRPParser()
-    with open(input_file, encoding="utf8", newline='') as fileobj:
+    with open(input_file, encoding="utf8", newline="") as fileobj:
         memories = parser.parse(fileobj)
 
     reference_file = output_files_dir / "mem1000-ADMS16.csv"

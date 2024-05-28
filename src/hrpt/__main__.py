@@ -69,7 +69,7 @@ def main(argv=None):
     # TODO maybe the open should be encapsulated in the parser because
     # the CSV module needs newline=''
     if args.input_file:
-        with open(args.input_file, encoding="utf8", newline='') as fileobj:
+        with open(args.input_file, encoding="utf8", newline="") as fileobj:
             memories = parser.parse(fileobj)
     else:
         memories = parser.parse(sys.stdin)
@@ -77,7 +77,7 @@ def main(argv=None):
     # TODO maybe the open should be encapsulated in the renderer?
     renderer = hrpt.renderers.ADMS16Renderer()
     if args.output_file:
-        with open(args.output_file, mode = "w", encoding="utf8", newline = '\n') as fileobj:
+        with open(args.output_file, mode="w", encoding="utf8", newline="\n") as fileobj:
             renderer.render(memories, fileobj)
     else:
         renderer.render(memories, sys.stdout)
