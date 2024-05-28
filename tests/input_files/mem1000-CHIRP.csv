@@ -1,11 +1,4 @@
 Location,Name,Frequency,Duplex,Offset,Tone,rToneFreq,cToneFreq,DtcsCode,DtcsPolarity,RxDtcsCode,CrossMode,Mode,TStep,Skip,Power,Comment,URCALL,RPT1CALL,RPT2CALL,DVCODE
-1,Primary,449.875000,-,0.600000,DTCS,88.5,88.5,051,NN,051,Tone->Tone,FM,25.00,,50W,,,,,
-2,Start/South,447.200000,-,0.600000,Tone,127.3,88.5,051,NN,023,Tone->Tone,FM,25.00,,50W,,,,,
-3,Plain City,145.490000,-,0.600000,Tone,123.0,88.5,023,NN,023,Tone->Tone,FM,5.00,,50W,,,,,
-4,Emergency,449.600000,-,0.600000,Tone,136.5,88.5,051,NN,023,Tone->Tone,FM,25.00,,50W,,,,,
-5,Backup 1,448.600000,-,0.600000,Tone,123.0,88.5,051,NN,023,Tone->Tone,FM,25.00,,50W,,,,,
-6,Backup 2,146.900000,-,0.600000,DTCS,123.0,88.5,125,NN,125,Tone->Tone,FM,5.00,,50W,,,,,
-7,Simplex,147.540000,,0.600000,,123.0,88.5,125,NN,023,Tone->Tone,FM,5.00,,50W,,,,,
 99,APRS,144.390000,,0.600000,,88.5,88.5,023,NN,023,Tone->Tone,FM,5.00,,50W,,,,,
 101,DHRA Repeater,447.100000,-,5.000000,Tone,100.0,100.0,023,NN,023,Tone->Tone,FM,25.00,,50W,,,,,
 102,I/Farnsworth,147.120000,+,0.600000,Tone,100.0,100.0,023,NN,023,Tone->Tone,FM,5.00,,50W,,,,,

@@ -63,6 +63,29 @@ namespace.add_task(formatt)
 
 #####
 #
+# pytest, tox, pylint, and codecov
+#
+#####
+@invoke.task
+def pytest(context):
+    "Run tests and code coverage using pytest"
+    context.run("pytest", echo=True, pty=True)
+
+
+namespace_check.add_task(pytest)
+
+
+@invoke.task
+def pytest_clean(context):
+    "Remove pytest cache and code coverage files and directories"
+    dirs = [".pytest_cache", ".cache", ".coverage"]
+    rmrf(dirs)
+
+
+namespace_clean.add_task(pytest_clean, "pytest")
+
+#####
+#
 # build and distribute
 #
 #####
