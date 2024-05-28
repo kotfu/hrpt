@@ -1,5 +1,34 @@
 # hrpt
-Ham Radio Programming Tool
+Ham Radio Programming Toolkit
+
+I have several ham radio VHF/UHF radios. It would be great if they all
+used the same programming software.
+[CHIRP](https://chirpmyradio.com/projects/chirp/wiki/Home) is the natural answer,
+it's free and it supports a bunch of radios. But it doesn't support all radios, and
+there are some minor differences in the CHIRP import and export file format
+depending on the radio it's connected to.
+
+I've had people email me a "CHIRP file that you can import", and have it be
+an Excel spreadsheet, which when then had to export to a CSV, and when I
+imported it into chirp it complained about some of the frequencies or
+settings.
+
+I want a way to keep a single list of frequencies for radios with 999
+memories, and then have a tool that would create a file I could immediately
+import into CHIRP that was connected to my Kenwood TH-D75, and another file
+that I could import into CHIRP that was connected to the Wouxun KG-UV9PX, and
+another file that I could import into ADMS-16, the software from Yaesu used to
+program the FTM-500DR.
+
+I tried making a big spreadsheet to do this, but I ran into a bunch of limitations.
+I'm a better programmer than I am a spreadsheet wizard, so I decided to build
+some software which can:
+
+* Parse the key information for a set of VHF/UHF memories stored in several
+  different formats (including CHIRP and a generic Excel version)
+* Translate that information into one of more output formats that can be
+  imported into programming software and sent to a radio with no additional
+  fiddling or hand-tweaking
 
 
 ## Contributing
